@@ -23,10 +23,7 @@ import { states, countries } from "./countries.js";
 import Bank from "./Bank/index.js";
 
 const stripePromise = loadStripe(
-  "pk_live_51NAchIGbvxLpUMRXV12SgJht4JMwWzPcwRss6geuqcWsuACZB5tWC2EeZWpWLyk9AhQ8n0yBnTUpM21c1eqLdE0500u9m87ocl"
-  //"pk_test_51MTtNXGVa6IKUDzpbVag2vdLVm7bU8lfz3sCH0DmMLF9eAhqAJDNyxXxJLzZ2i0YyCkFRCcrjr0qMKD5eIEkLClB00GGdnmtDm"
-  //"pk_live_51MTtNXGVa6IKUDzpzfh68EGc5WtnlPHrbihfLz6l4dOjYP9YSU6Sf2a50F1Jcb0iajYsYe6zqmPzbJMmT3RDb2OX00zhmtlWzf"
-  //"pk_live_51NIZJ4HJpB9cwv9EB7ZihHwH5bxnuacNa9AgeO1uYEiXSjjJHZ6AOc2h9GJqo1twg1xYnPvc9P1G2MYD8v76owL800eopp5HAY"
+  "pk_live_51OKNATFM5LbCaNp9oc0X1gSOihpvb9e9su7C437PRT0eApItNnLwpcLXCNgXxRyN5wC1W1l1CN68ThLrjyyjU36B008vSUhERN"
 );
 const firestore = getFirestore(firebase);
 class User extends React.Component {
