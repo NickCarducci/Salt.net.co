@@ -654,26 +654,7 @@ export default class App extends React.Component {
       Object.keys(window.meAuth).length > 0
         ? window.meAuth
         : undefined;
-    return this.props.pathname.includes("/terms") ? (
-      <div>
-        You agree to not surrender any other's rights by enduring trades with
-        Vaumoney and Nick Carducci in order to save tax-free in 7011, 8099,
-        8299, and 8398 tax-advantaged accounts for real property development
-        operations management and charity or{space}
-        <a href="https://vau.money/privacy">discount</a>.
-      </div>
-    ) : this.props.pathname.includes("/privacy") ? (
-      <div>
-        To use vau.money, you must enter personally identifiable information
-        such as social security and phone number, email, first and last name,
-        address, and other business information. This information is stored with
-        Stripe, other than Firebase, which stores your name and operating
-        characteristic data. None of this data is{space}
-        <a href="https://vau.money/terms">sold</a>
-        {space}nor discounted/gifted.
-        {/*nor does it affect the chronology of transactions.*/}
-      </div>
-    ) : this.props.pathname !== "/" ? (
+    return this.props.pathname !== "/" ? (
       <User pathname={this.props.pathname} />
     ) : (
       <div style={{ maxWidth: "500px" }}>
@@ -730,7 +711,7 @@ export default class App extends React.Component {
         />
         Salt.net.co collects your name and username, while Stripe.com collects
         your addresss and banking credentials. You can payout there, and
-        customize your donation page.
+        customize your donation page. (help: sayists@icloud.com)
         {meAuth === undefined ? (
           <Sudo
             ref={{ current: {} }}
