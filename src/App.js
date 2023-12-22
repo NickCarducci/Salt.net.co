@@ -827,7 +827,7 @@ export default class App extends React.Component {
           </button>
         )}
         {meAuth === undefined ? (
-          "Sign in to transact without fees."
+          "Sign in to transact without fees or visit a /slug to donate."
         ) : (
           <div>
             <Bank
