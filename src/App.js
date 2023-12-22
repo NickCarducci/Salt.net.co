@@ -709,7 +709,7 @@ export default class App extends React.Component {
           onFinish={() => {}}
           meAuth={window.meAuth === undefined ? null : window.meAuth}
         />
-        Salt Donation ("Generate your own donation page") collects your name and
+        Salt Donation ("Generate your own donation page") collects your name,
         username, address, and banking credentials. (help: sayists@icloud.com)
         {meAuth === undefined ? (
           <Sudo
@@ -843,4 +843,3 @@ export default class App extends React.Component {
     );
   }
 }
-
