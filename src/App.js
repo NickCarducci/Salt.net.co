@@ -709,9 +709,8 @@ export default class App extends React.Component {
           onFinish={() => {}}
           meAuth={window.meAuth === undefined ? null : window.meAuth}
         />
-        Salt.net.co collects your name and username, while Stripe.com collects
-        your addresss and banking credentials. You can payout there, and
-        customize your donation page. (help: sayists@icloud.com)
+        Salt Donation ("Generate your own donation page") collects your name and
+        username, address, and banking credentials. (help: sayists@icloud.com)
         {meAuth === undefined ? (
           <Sudo
             ref={{ current: {} }}
@@ -844,3 +843,4 @@ export default class App extends React.Component {
     );
   }
 }
+
