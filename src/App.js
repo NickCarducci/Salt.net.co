@@ -21,6 +21,12 @@ import {
 } from "firebase/firestore";
 import { states, countries } from "./countries.js";
 import Bank from "./Bank/index.js";
+import {
+  browserSessionPersistence,
+  getAuth,
+  setPersistence,
+  signOut
+} from "firebase/auth";
 
 const stripePromise = loadStripe(
   "pk_live_51OKNATFM5LbCaNp9oc0X1gSOihpvb9e9su7C437PRT0eApItNnLwpcLXCNgXxRyN5wC1W1l1CN68ThLrjyyjU36B008vSUhERN"
@@ -712,105 +718,125 @@ export default class App extends React.Component {
         Salt Donation ("Generate your own donation page") collects your name,
         username, address, and banking credentials. (help: sayists@icloud.com)
         {meAuth === undefined ? (
-          <Sudo
-            ref={{ current: {} }}
-            forbiddenUsernames={[
-              "event",
-              "events",
-              "club",
-              "clubs",
-              "shop",
-              "shops",
-              "restaurant",
-              "restaurants",
-              "service",
-              "services",
-              "dept",
-              "department",
-              "departments",
-              "classes",
-              "class",
-              "oldclass",
-              "oldclasses",
-              "job",
-              "jobs",
-              "housing",
-              "oldhome",
-              "page",
-              "pages",
-              "venue",
-              "venues",
-              "forum",
-              "posts",
-              "post",
-              "oldelection",
-              "elections",
-              "election",
-              "case",
-              "cases",
-              "oldcase",
-              "oldcases",
-              "budget",
-              "budgets",
-              "oldbudget",
-              "oldbudgets",
-              "ordinance",
-              "ordinances",
-              "new",
-              "news",
-              "login",
-              "logins",
-              "doc",
-              "docs",
-              "private",
-              "privacy",
-              "legal",
-              "terms",
-              "law",
-              "laws",
-              "bill",
-              "bills"
-            ]}
-            phoneNumberCollection={"numbers"}
-            width={this.props.width}
-            rooturi={"https://thumbprint.app/"} //comment out to use click
-            homeuri={"https://thumbprint.app"} // emulateRoot onroot instead
-            logoutofapp={logoutofapp}
-            auth={meAuth}
-            lastWidth={this.props.lastWidth}
-            availableHeight={this.props.appHeight}
-            backgroundColor={null} //transparent
-            position={"relative"}
-            supportemail={"nick@thumbprint.us"}
-            welcomeName={"Thumbprint.us - Social calendar"}
-            onroot={true}
-            emulateRoot={(e) => this.setState(e)}
-            getUserInfo={() => this.gui.current.click()}
-            setAuth={(auth) =>
-              this.setState(auth, () => this.pa.current.click())
-            }
-            //
-            meAuth={window.meAuth}
-            user={this.state.user}
-            pathname={this.props.pathname}
-            navigate={this.props.navigate}
-            useTopComment={null}
-            memberMessage=""
-            subTop=""
-            useTitle={<span></span>}
-            useCan={null} //trash
-            useCanComment={null}
-            root={(a) => this.state.onroot && <div></div>}
-            rootArguments={[
-              {
-                current: {}
+          !this.state.login ? (
+            <div
+              style={{
+                fontSize: "30px",
+                fontFamily: "'Pacifico', cursive",
+                padding: "25px 0px",
+                textAlign: "center",
+                width: "100%",
+                backgroundColor: "darkblue"
+              }}
+            >
+              <div style={{ color: "white" }}>Salt</div>
+              <button
+                onClick={() => this.setState({ login: !this.state.login })}
+              >
+                login / signup
+              </button>
+            </div>
+          ) : (
+            <Sudo
+              ref={{ current: {} }}
+              forbiddenUsernames={[
+                "event",
+                "events",
+                "club",
+                "clubs",
+                "shop",
+                "shops",
+                "restaurant",
+                "restaurants",
+                "service",
+                "services",
+                "dept",
+                "department",
+                "departments",
+                "classes",
+                "class",
+                "oldclass",
+                "oldclasses",
+                "job",
+                "jobs",
+                "housing",
+                "oldhome",
+                "page",
+                "pages",
+                "venue",
+                "venues",
+                "forum",
+                "posts",
+                "post",
+                "oldelection",
+                "elections",
+                "election",
+                "case",
+                "cases",
+                "oldcase",
+                "oldcases",
+                "budget",
+                "budgets",
+                "oldbudget",
+                "oldbudgets",
+                "ordinance",
+                "ordinances",
+                "new",
+                "news",
+                "login",
+                "logins",
+                "doc",
+                "docs",
+                "private",
+                "privacy",
+                "legal",
+                "terms",
+                "law",
+                "laws",
+                "bill",
+                "bills"
+              ]}
+              phoneNumberCollection={"numbers"}
+              width={this.props.width}
+              rooturi={"https://thumbprint.app/"} //comment out to use click
+              homeuri={"https://thumbprint.app"} // emulateRoot onroot instead
+              logoutofapp={logoutofapp}
+              auth={meAuth}
+              lastWidth={this.props.lastWidth}
+              availableHeight={this.props.appHeight}
+              backgroundColor={null} //transparent
+              position={"relative"}
+              supportemail={"nick@thumbprint.us"}
+              welcomeName={"Thumbprint.us - Social calendar"}
+              onroot={true}
+              emulateRoot={(e) => this.setState(e)}
+              getUserInfo={() => this.gui.current.click()}
+              setAuth={(auth) =>
+                this.setState(auth, () => this.pa.current.click())
               }
-            ]}
-            subRoot=""
-            //emulateRoot={() => this.props.navigate("/")}
-            home={!this.state.onroot && <div></div>} //Are drug gangs not pharmacists because they have no shop nor employees?
-            //Do employees of regular businesses with diverse customers have to report gifted sweat up to $15,000 per year?
-          />
+              //
+              meAuth={window.meAuth}
+              user={this.state.user}
+              pathname={this.props.pathname}
+              navigate={this.props.navigate}
+              useTopComment={null}
+              memberMessage=""
+              subTop=""
+              useTitle={<span></span>}
+              useCan={null} //trash
+              useCanComment={null}
+              root={(a) => this.state.onroot && <div></div>}
+              rootArguments={[
+                {
+                  current: {}
+                }
+              ]}
+              subRoot=""
+              //emulateRoot={() => this.props.navigate("/")}
+              home={!this.state.onroot && <div></div>} //Are drug gangs not pharmacists because they have no shop nor employees?
+              //Do employees of regular businesses with diverse customers have to report gifted sweat up to $15,000 per year?
+            />
+          )
         ) : (
           <button
             onClick={() => logoutofapp()}
