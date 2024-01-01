@@ -40,7 +40,9 @@ import { countries, states } from "./countries";
 import { specialFormatting, standardCatch } from "../Sudo";
 
 const firestore = getFirestore(firebase);
-const stripePromise = loadStripe("pk_live_QbdOMSMchlB2Bw8JeKVFAlWp"); //pk
+const stripePromise = loadStripe(
+  "pk_live_51OKNATFM5LbCaNp9oc0X1gSOihpvb9e9su7C437PRT0eApItNnLwpcLXCNgXxRyN5wC1W1l1CN68ThLrjyyjU36B008vSUhERN"
+); //pk
 class Bank extends React.Component {
   constructor(props) {
     super(props);
