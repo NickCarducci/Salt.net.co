@@ -123,6 +123,34 @@ class Bank extends React.Component {
             }
           );
       } else {
+        this.props.user !== undefined &&
+          (await fetch(
+            "https://king-prawn-app-j2f2s.ondigitalocean.app/reapply",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "Application/JSON",
+                "Access-Control-Request-Method": "POST",
+                "Access-Control-Request-Headers": ["Origin", "Content-Type"] //allow referer
+              },
+              body: JSON.stringify({
+                stripeId: this.props.user.stripeId
+              })
+            }
+          )
+            .then(async (res) => await res.json())
+            .then(async (result) => {
+              if (result.status) return console.log(result);
+              if (result.error) return console.log(result);
+              if (!result.account)
+                return console.log("dev error (Cash)", result);
+
+              window.location.href = result.account.accountLink.url;
+              this.props.navigate("/");
+              //window.location.reload();
+            })
+            .catch(standardCatch));
+        return null;
         getDoc(
           doc(firestore, "userDatas", this.props.auth.uid)
         ) /*.then((d) => {return { keyvalue, exists: d.exists() }; })*/
@@ -513,7 +541,7 @@ class Bank extends React.Component {
             requested: true
           }
         },*/
-        business_type: "individual", //company email required?
+        business_type: "company", //company email required?
         default_currency: "usd"
         /*tos_acceptance: {
           ...ownership_declaration,
@@ -637,6 +665,12 @@ class Bank extends React.Component {
                       }
                     ) //RESSEND(res, { statusText: "successful accountLink"});
                       .then(() => {
+                        updateDoc(
+                          doc(firestore, "users", this.props.auth.uid),
+                          {
+                            stripeId: result.account.id
+                          }
+                        );
                         //8398
                         //6540
                         const answer = window.confirm(
@@ -674,8 +708,8 @@ class Bank extends React.Component {
       /**
        * a stripe account exists
        */
-      if (user.stripeId && !user.stripeLink) {
-        if (user.customerId) this.deleteThese([], [user.customerId]);
+      if (user.stripeId && !user.stripeLink && !user.customerId) {
+        //if (user.customerId) this.deleteThese([], [user.customerId]);
         /*if (user[`customer${shorter(trust.mcc)}Id`]) {
           if (!user[`cardholder${shorter(trust.mcc)}Id`])
           return console.log("dev error (no card)");
@@ -706,8 +740,9 @@ class Bank extends React.Component {
         /**
          * make customer with private userDatas + firebase auth User info
          */
-        const { address: addr, first, last } = user,
-          address = Object.keys(addr)
+
+        const { address: addr, first, last } = user;
+        const address = Object.keys(addr)
             .map((x) => {
               //console.log(remaining, event.value.address[next]);
               return addr[x]
@@ -1738,4 +1773,3 @@ class Bank extends React.Component {
   }
 }
 export default Bank;
-
