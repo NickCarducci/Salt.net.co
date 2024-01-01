@@ -106,18 +106,20 @@ class Bank extends React.Component {
           .then(
             //{ keyvalue, exists }
             (d) => {
-              (d.exists() ? updateDoc : setDoc)(
+              /*(d.exists() ? updateDoc : setDoc)(
                 doc(firestore, "userDatas", this.props.auth.uid),
                 {
                   [`stripeLink`]: deleteField()
                 }
               ) //RESSEND(res, { statusText: "successful accountLink"});
                 .then(() => {
-                  updateDoc(doc(firestore, "users", this.props.auth.uid), {
-                    [`stripeId`]: stripeId
-                  });
-                  this.props.navigate("/");
-                });
+                  */ updateDoc(
+                doc(firestore, "users", this.props.auth.uid),
+                {
+                  [`stripeId`]: stripeId
+                }
+              );
+              this.props.navigate("/");
             }
           );
       } else {
@@ -127,19 +129,21 @@ class Bank extends React.Component {
           .then(
             //{ keyvalue, exists }
             (d) => {
-              (d.exists() ? updateDoc : setDoc)(
+              /*(d.exists() ? updateDoc : setDoc)(
                 doc(firestore, "userDatas", this.props.auth.uid),
                 {
                   [`stripeLink`]: deleteField()
                 }
               ) //RESSEND(res, { statusText: "successful accountLink"});
                 .then(async () => {
-                  updateDoc(doc(firestore, "users", this.props.auth.uid), {
-                    [`stripeId`]: deleteField()
-                  });
-                  this.deleteThese([stripeId]);
-                  this.props.navigate("/");
-                });
+                  */ updateDoc(
+                doc(firestore, "users", this.props.auth.uid),
+                {
+                  [`stripeId`]: deleteField()
+                }
+              );
+              this.deleteThese([stripeId]);
+              this.props.navigate("/");
             }
           );
       }
@@ -509,7 +513,7 @@ class Bank extends React.Component {
             requested: true
           }
         },*/
-        business_type: "company", //email required?
+        business_type: "individual", //company email required?
         default_currency: "usd"
         /*tos_acceptance: {
           ...ownership_declaration,
@@ -1734,3 +1738,4 @@ class Bank extends React.Component {
   }
 }
 export default Bank;
+
