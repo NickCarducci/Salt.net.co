@@ -853,7 +853,7 @@ export default class App extends React.Component {
           </button>
         )}
         {meAuth === undefined ? (
-          "Sign in to transact without fees or visit a /slug to donate."
+          "Sign in to transact without 2.9% + $.30 fees or visit a /slug to donate."
         ) : (
           <div>
             <Bank
@@ -869,3 +869,4 @@ export default class App extends React.Component {
     );
   }
 }
+
