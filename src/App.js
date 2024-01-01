@@ -34,6 +34,7 @@ const stripePromise = loadStripe(
 const firestore = getFirestore(firebase);
 class User extends React.Component {
   state = {
+    amount: 0,
     billing_details: {
       first: "",
       middle: "",
@@ -323,9 +324,7 @@ class User extends React.Component {
                               if (result.error) {
                                 console.log(result);
                               } else {
-                                window.alert(
-                                  "You've paid " + this.state.amount + " to "
-                                );
+                                window.alert("You've paid ");
                               }
                             });
                         }}
@@ -400,6 +399,7 @@ class User extends React.Component {
                   //paymentMethod: x.id,
                   //customerId: user[`customer${sht}Id`],
                   //storeId: this.state.chosenRecipient[`stripe83Id`],
+                  fee: this.state.amount * 100 * 0.029 + 0.3,
                   currency: "usd",
                   total: this.state.amount * 100,
                   //...bankcard
