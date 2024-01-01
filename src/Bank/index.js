@@ -1087,8 +1087,7 @@ class Bank extends React.Component {
         <br />
         {this.props.user !== undefined &&
           this.props.auth.email &&
-          this.props.auth.emailVerified &&
-          !this.props.user.stripeLink && (
+          this.props.auth.emailVerified && (
             <div
               onClick={() => {
                 if (false && user.customerId) {
