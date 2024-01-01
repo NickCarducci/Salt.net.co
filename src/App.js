@@ -660,6 +660,7 @@ export default class App extends React.Component {
       Object.keys(window.meAuth).length > 0
         ? window.meAuth
         : undefined;
+    const space = " ";
     return this.props.pathname !== "/" ? (
       <User pathname={this.props.pathname} />
     ) : (
@@ -715,8 +716,16 @@ export default class App extends React.Component {
           onFinish={() => {}}
           meAuth={window.meAuth === undefined ? null : window.meAuth}
         />
-        Salt Donation ("Generate your own donation page") collects your name,
-        username, address, and banking credentials. (help: sayists@icloud.com)
+        Salt Donation collects your name, username, address, and banking
+        credentials to{space}
+        <span
+          style={{
+            textDecoration: "underline"
+          }}
+        >
+          generate your own donation page
+        </span>
+        . (help: sayists@icloud.com)
         {meAuth === undefined ? (
           !this.state.login ? (
             <div
@@ -869,4 +878,3 @@ export default class App extends React.Component {
     );
   }
 }
-
