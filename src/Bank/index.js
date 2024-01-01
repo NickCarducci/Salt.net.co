@@ -399,9 +399,9 @@ class Bank extends React.Component {
       });
     };
     const trust = {
-      mcc: "7399",
-      account: "Business",
-      description: "Payday loans."
+      mcc: "8398",
+      account: "Charity",
+      description: "A simple donation page."
     };
     const purchase = async (x, custom) => {
       console.log("purchase");
@@ -421,19 +421,20 @@ class Bank extends React.Component {
             //Cannot provide a delay_days when interval is manual. delay_days is always the minimum for manual payouts.
             //delay_days: "minimum" //"doesn't apply", "2 day rolling basis (US)"
           },
-          statement_descriptor: "Thumbprint Events"
+          statement_descriptor: "Salt.net.co/" + this.props.user.username
         },
         pad = (x) => (String(x).length === 1 ? "0" + String(x) : x),
         today = new Date(),
         now =
           today.getUTCFullYear() +
           "-" +
-          pad(today.getUTCMonth()) +
+          pad(today.getUTCMonth() + 1) +
           "-" +
           pad(today.getUTCDate()),
         ip = "100.35.136.125", // IPv4,
         user_agent = this.state.user_agent,
         date = String(Math.floor(new Date(now).getTime() / 1000)); //new Date(now).getTime() / 1000, // - 14400, //
+      console.log(now);
       // return console.log("name", name);
       const first =
           paymentItems.first !== ""
@@ -469,8 +470,8 @@ class Bank extends React.Component {
           product_description: trust.description,
           support_email: this.props.auth.email,
           support_phone: this.props.auth.phoneNumber,
-          support_url: `https://wavv.art/${this.props.user.username}`,
-          url: `https://wavv.art/${this.props.user.username}`
+          support_url: `https://salt.net.co/${this.props.user.username}`,
+          url: `https://salt.net.co/${this.props.user.username}`
         }, //support, mcc, url
         settings: {
           /*payouts_enabled: true,
