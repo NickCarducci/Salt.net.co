@@ -862,7 +862,11 @@ export default class App extends React.Component {
           </button>
         )}
         {meAuth === undefined ? (
-          "Sign in to transact without 2.9% + $.30 fees or visit a /slug to donate."
+          <div>
+            Sign in to transact without 2.9% + $.30 fees or visit a /slug to
+            donate. Try it out!{" "}
+            <a href="https://salt.net.co/test3">Donate to the developer/</a>
+          </div>
         ) : (
           <div>
             <Bank
