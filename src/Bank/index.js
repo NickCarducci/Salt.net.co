@@ -182,7 +182,7 @@ class Bank extends React.Component {
     if (clientSec) {
       console.log("clientSec", clientSec);
       this.setState({
-        payoutType: "Bank",
+        selectBankToFinish: true,
         clientSec
       });
       false &&
@@ -708,7 +708,7 @@ class Bank extends React.Component {
       /**
        * a stripe account exists
        */
-      if (user.stripeId && !user.stripeLink && !user.customerId) {
+      if (user.stripeId && !user.customerId) {
         //if (user.customerId) this.deleteThese([], [user.customerId]);
         /*if (user[`customer${shorter(trust.mcc)}Id`]) {
           if (!user[`cardholder${shorter(trust.mcc)}Id`])
@@ -1546,6 +1546,8 @@ class Bank extends React.Component {
                   return <option key={x + "payout"}>{x}</option>;
                 })}
               </select>
+              {this.state.selectBankToFinish &&
+                "Select setup>bank to finish adding bank"}
             </h2>
             {false && this.state.confirmBank && (
               <form
@@ -1686,7 +1688,9 @@ class Bank extends React.Component {
                                 </div>
                               ) : null}
                             </div>
-                            <button disabled={!stripe}>Submit</button>
+                            <button disabled={!stripe}>
+                              Add Payment Method
+                            </button>
                           </form>
                         );
                       })()
