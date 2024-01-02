@@ -1,5 +1,5 @@
 import React from "react";
-import firebase from ".././init-firebase";
+import firebase from "./init-firebase";
 import {
   Elements,
   ElementsConsumer,
