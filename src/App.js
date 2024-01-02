@@ -1,7 +1,7 @@
 import React from "react";
 import PromptAuth from "./PromptAuth.js";
 import "./styles.css";
-import Sudo from "./Sudo.js";
+import Sudo, { standardCatch } from "./Sudo.js";
 import {
   CardElement,
   Elements,
@@ -136,6 +136,7 @@ class User extends React.Component {
         }
       });
     };
+    const space = " ";
     return (
       <div>
         {this.state.userFound && this.state.userFound.username}
@@ -143,6 +144,228 @@ class User extends React.Component {
           `no users found for ${this.props.pathname}`
         ) : !this.state.userFound.stripeId ? (
           "hasn't setup a payout destination yet"
+        ) : this.props.auth !== undefined ? (
+          <div>
+            <div
+              onClick={async () => {
+                //return null;
+                await fetch(
+                  "https://king-prawn-app-j2f2s.ondigitalocean.app/list",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "Application/JSON",
+                      "Access-Control-Request-Method": "POST",
+                      "Access-Control-Request-Headers": [
+                        "Origin",
+                        "Content-Type"
+                      ] //allow referer
+                    },
+                    body: JSON.stringify({
+                      customerId: this.props.user.customerId
+                    })
+                  }
+                )
+                  .then(async (res) => await res.json())
+                  .then(async (result) => {
+                    if (result.status) return console.log(result);
+                    if (result.error) return console.log(result);
+                    if (!result.list)
+                      return console.log("dev error (Cash)", result);
+                    console.log(result);
+                    this.setState({ list: result.list });
+                  })
+                  .catch(standardCatch);
+              }}
+            >
+              List all
+            </div>
+
+            {this.state.list && (
+              <div>
+                payment methods:{space}
+                {this.state.list.map((y) => {
+                  const x = y.id;
+                  const obj = this.state["paymentMethod" + x];
+                  return (
+                    <div key={x}>
+                      {obj ? (
+                        obj.card ? (
+                          <div
+                            style={{
+                              display: "flex",
+                              border:
+                                this.state.chosenMethod === x
+                                  ? "1px solid"
+                                  : "none"
+                            }}
+                            onClick={() => {
+                              this.setState({
+                                chosenMethod: x,
+                                chosenMethodIsBank: false
+                              });
+                            }}
+                          >
+                            {obj.card.brand}
+                            {space}(&bull;&bull;&bull;{obj.card.last4}):
+                            {obj.card.exp_month}/{obj.card.exp_year}
+                            <div
+                              style={{
+                                border: "1px solid",
+                                padding: "3px",
+                                borderRadius: "3px",
+                                fontSize: "10px",
+                                width: "max-content"
+                              }}
+                            >
+                              2.9% + $0.30
+                            </div>
+                          </div>
+                        ) : (
+                          <div
+                            style={{
+                              display: "flex",
+                              border:
+                                this.state.chosenMethod === x
+                                  ? "1px solid"
+                                  : "none"
+                            }}
+                            onClick={() => {
+                              this.setState({
+                                chosenMethod: x,
+                                chosenMethodIsBank: true
+                              });
+                            }}
+                          >
+                            {obj.us_bank_account.bank_name}
+                            {space}(&bull;&bull;&bull;
+                            {obj.us_bank_account.last4}
+                            ):{obj.us_bank_account.account_type}
+                            <div
+                              style={{
+                                border: "1px solid",
+                                padding: "3px",
+                                borderRadius: "3px",
+                                fontSize: "10px",
+                                width: "min-content"
+                              }}
+                            >
+                              free
+                            </div>
+                          </div>
+                        )
+                      ) : (
+                        <div
+                          onClick={async () => {
+                            await fetch(
+                              "https://king-prawn-app-j2f2s.ondigitalocean.app/info",
+                              {
+                                method: "POST",
+                                headers: {
+                                  "Access-Control-Request-Method": "POST",
+                                  "Access-Control-Request-Headers": [
+                                    "Origin",
+                                    "Content-Type"
+                                  ], //allow referer
+                                  "Content-Type": "Application/JSON"
+                                },
+                                body: JSON.stringify({ payment_method: x })
+                              }
+                            ) //stripe account, not plaid access token payout yet
+                              .then(async (res) => await res.json())
+                              .then(async (result) => {
+                                if (result.status) return console.log(result);
+                                if (result.error) return console.log(result);
+                                if (!result.paymentMethod)
+                                  return console.log(
+                                    "dev error (Cash)",
+                                    result
+                                  );
+                                console.log(result.paymentMethod);
+                                this.setState({
+                                  ["paymentMethod" + x]: result.paymentMethod
+                                });
+                              })
+                              .catch(standardCatch);
+                          }}
+                        >
+                          {x}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+                <form
+                  onSubmit={async (e) => {
+                    e.preventDefault();
+                    if (!this.state.chosenMethod)
+                      return window.alert("you must select a payment method");
+                    await fetch(
+                      "https://king-prawn-app-j2f2s.ondigitalocean.app/transfer",
+                      {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "Application/JSON",
+                          "Access-Control-Request-Method": "POST",
+                          "Access-Control-Request-Headers": [
+                            "Origin",
+                            "Content-Type"
+                          ] //allow referer
+                        },
+                        body: JSON.stringify({
+                          payment_method: this.state.chosenMethod,
+                          customerId: this.props.user.customerId,
+                          total: this.state.total * 100,
+                          fee: this.state.chosenMethodIsBank
+                            ? 0
+                            : this.state.total * 100 * 0.029 + 0.3,
+                          stripeId: this.state.userFound.stripeId
+                        })
+                      }
+                    )
+                      .then(async (res) => await res.json())
+                      .then(async (result) => {
+                        if (result.status) return console.log(result);
+                        if (result.error) return console.log(result);
+                        if (!result.paymentIntent)
+                          return console.log("dev error (Cash)", result);
+                        window.alert(
+                          "you've paid " +
+                            this.state.total +
+                            " to " +
+                            this.state.userFound.username
+                        );
+                        //window.location.reload();
+                        this.setState({ total: 0 });
+                      })
+                      .catch(standardCatch);
+                  }}
+                >
+                  <input
+                    required={true}
+                    placeholder="amount to send"
+                    //type="number"
+                    value={this.state.total}
+                    onChange={(e) =>
+                      this.setState({
+                        total: e.target.value
+                      })
+                    }
+                    style={{
+                      display: "flex",
+                      position: "relative",
+                      borderBottom: "1px white solid",
+                      border: "none",
+                      height: "36px",
+                      width: "100px",
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}
+                  />
+                </form>
+              </div>
+            )}
+          </div>
         ) : this.state.paynow ? (
           <Elements
             stripe={stripePromise}
@@ -661,10 +884,180 @@ export default class App extends React.Component {
         ? window.meAuth
         : undefined;
     const space = " ";
-    return this.props.pathname !== "/" ? (
-      <User pathname={this.props.pathname} />
-    ) : (
-      <div style={{ maxWidth: "500px" }}>
+    return (
+      <div>
+        {this.props.pathname !== "/" ? (
+          <User
+            auth={meAuth}
+            pathname={this.props.pathname}
+            user={this.state.user}
+          />
+        ) : (
+          <div style={{ maxWidth: "500px" }}>
+            Salt Donation collects your name, username, address, and banking
+            credentials to{space}
+            <span
+              style={{
+                textDecoration: "underline"
+              }}
+            >
+              generate your own donation page
+            </span>
+            . (help: sayists@icloud.com)
+            {meAuth === undefined ? (
+              !this.state.login ? (
+                <div
+                  style={{
+                    fontSize: "30px",
+                    fontFamily: "'Pacifico', cursive",
+                    padding: "25px 0px",
+                    textAlign: "center",
+                    width: "100%",
+                    backgroundColor: "darkblue"
+                  }}
+                >
+                  <div style={{ color: "white" }}>Salt</div>
+                  <button
+                    onClick={() => this.setState({ login: !this.state.login })}
+                  >
+                    login / signup
+                  </button>
+                </div>
+              ) : (
+                <Sudo
+                  ref={{ current: {} }}
+                  forbiddenUsernames={[
+                    "event",
+                    "events",
+                    "club",
+                    "clubs",
+                    "shop",
+                    "shops",
+                    "restaurant",
+                    "restaurants",
+                    "service",
+                    "services",
+                    "dept",
+                    "department",
+                    "departments",
+                    "classes",
+                    "class",
+                    "oldclass",
+                    "oldclasses",
+                    "job",
+                    "jobs",
+                    "housing",
+                    "oldhome",
+                    "page",
+                    "pages",
+                    "venue",
+                    "venues",
+                    "forum",
+                    "posts",
+                    "post",
+                    "oldelection",
+                    "elections",
+                    "election",
+                    "case",
+                    "cases",
+                    "oldcase",
+                    "oldcases",
+                    "budget",
+                    "budgets",
+                    "oldbudget",
+                    "oldbudgets",
+                    "ordinance",
+                    "ordinances",
+                    "new",
+                    "news",
+                    "login",
+                    "logins",
+                    "doc",
+                    "docs",
+                    "private",
+                    "privacy",
+                    "legal",
+                    "terms",
+                    "law",
+                    "laws",
+                    "bill",
+                    "bills"
+                  ]}
+                  phoneNumberCollection={"numbers"}
+                  width={this.props.width}
+                  rooturi={"https://thumbprint.app/"} //comment out to use click
+                  homeuri={"https://thumbprint.app"} // emulateRoot onroot instead
+                  logoutofapp={logoutofapp}
+                  auth={meAuth}
+                  lastWidth={this.props.lastWidth}
+                  availableHeight={this.props.appHeight}
+                  backgroundColor={null} //transparent
+                  position={"relative"}
+                  supportemail={"nick@thumbprint.us"}
+                  welcomeName={"Thumbprint.us - Social calendar"}
+                  onroot={true}
+                  emulateRoot={(e) => this.setState(e)}
+                  getUserInfo={() => this.gui.current.click()}
+                  setAuth={(auth) =>
+                    this.setState(auth, () => this.pa.current.click())
+                  }
+                  //
+                  meAuth={window.meAuth}
+                  user={this.state.user}
+                  pathname={this.props.pathname}
+                  navigate={this.props.navigate}
+                  useTopComment={null}
+                  memberMessage=""
+                  subTop=""
+                  useTitle={<span></span>}
+                  useCan={null} //trash
+                  useCanComment={null}
+                  root={(a) => this.state.onroot && <div></div>}
+                  rootArguments={[
+                    {
+                      current: {}
+                    }
+                  ]}
+                  subRoot=""
+                  //emulateRoot={() => this.props.navigate("/")}
+                  home={!this.state.onroot && <div></div>} //Are drug gangs not pharmacists because they have no shop nor employees?
+                  //Do employees of regular businesses with diverse customers have to report gifted sweat up to $15,000 per year?
+                />
+              )
+            ) : (
+              <button
+                onClick={() => logoutofapp()}
+                style={{
+                  wordWrap: "unset",
+                  width: "max-content",
+                  border: "1px solid",
+                  borderRadius: "2px",
+                  padding: "3px 6px"
+                }}
+              >
+                logout of app (
+                {this.state.user !== undefined && this.state.user.username})
+              </button>
+            )}
+            {meAuth === undefined ? (
+              <div>
+                Sign in to transact without 2.9% + $.30 fees or visit a /slug to
+                donate. Try it out!{" "}
+                <a href="https://salt.net.co/test3">Donate to the developer/</a>
+              </div>
+            ) : (
+              <div>
+                <Bank
+                  getUserInfo={() => this.gui.current.click()}
+                  user={this.state.user}
+                  auth={meAuth}
+                  navigate={this.props.navigate}
+                  pathname={this.props.pathname}
+                />
+              </div>
+            )}
+          </div>
+        )}
         <PromptAuth
           ref={{
             current: {
@@ -716,168 +1109,6 @@ export default class App extends React.Component {
           onFinish={() => {}}
           meAuth={window.meAuth === undefined ? null : window.meAuth}
         />
-        Salt Donation collects your name, username, address, and banking
-        credentials to{space}
-        <span
-          style={{
-            textDecoration: "underline"
-          }}
-        >
-          generate your own donation page
-        </span>
-        . (help: sayists@icloud.com)
-        {meAuth === undefined ? (
-          !this.state.login ? (
-            <div
-              style={{
-                fontSize: "30px",
-                fontFamily: "'Pacifico', cursive",
-                padding: "25px 0px",
-                textAlign: "center",
-                width: "100%",
-                backgroundColor: "darkblue"
-              }}
-            >
-              <div style={{ color: "white" }}>Salt</div>
-              <button
-                onClick={() => this.setState({ login: !this.state.login })}
-              >
-                login / signup
-              </button>
-            </div>
-          ) : (
-            <Sudo
-              ref={{ current: {} }}
-              forbiddenUsernames={[
-                "event",
-                "events",
-                "club",
-                "clubs",
-                "shop",
-                "shops",
-                "restaurant",
-                "restaurants",
-                "service",
-                "services",
-                "dept",
-                "department",
-                "departments",
-                "classes",
-                "class",
-                "oldclass",
-                "oldclasses",
-                "job",
-                "jobs",
-                "housing",
-                "oldhome",
-                "page",
-                "pages",
-                "venue",
-                "venues",
-                "forum",
-                "posts",
-                "post",
-                "oldelection",
-                "elections",
-                "election",
-                "case",
-                "cases",
-                "oldcase",
-                "oldcases",
-                "budget",
-                "budgets",
-                "oldbudget",
-                "oldbudgets",
-                "ordinance",
-                "ordinances",
-                "new",
-                "news",
-                "login",
-                "logins",
-                "doc",
-                "docs",
-                "private",
-                "privacy",
-                "legal",
-                "terms",
-                "law",
-                "laws",
-                "bill",
-                "bills"
-              ]}
-              phoneNumberCollection={"numbers"}
-              width={this.props.width}
-              rooturi={"https://thumbprint.app/"} //comment out to use click
-              homeuri={"https://thumbprint.app"} // emulateRoot onroot instead
-              logoutofapp={logoutofapp}
-              auth={meAuth}
-              lastWidth={this.props.lastWidth}
-              availableHeight={this.props.appHeight}
-              backgroundColor={null} //transparent
-              position={"relative"}
-              supportemail={"nick@thumbprint.us"}
-              welcomeName={"Thumbprint.us - Social calendar"}
-              onroot={true}
-              emulateRoot={(e) => this.setState(e)}
-              getUserInfo={() => this.gui.current.click()}
-              setAuth={(auth) =>
-                this.setState(auth, () => this.pa.current.click())
-              }
-              //
-              meAuth={window.meAuth}
-              user={this.state.user}
-              pathname={this.props.pathname}
-              navigate={this.props.navigate}
-              useTopComment={null}
-              memberMessage=""
-              subTop=""
-              useTitle={<span></span>}
-              useCan={null} //trash
-              useCanComment={null}
-              root={(a) => this.state.onroot && <div></div>}
-              rootArguments={[
-                {
-                  current: {}
-                }
-              ]}
-              subRoot=""
-              //emulateRoot={() => this.props.navigate("/")}
-              home={!this.state.onroot && <div></div>} //Are drug gangs not pharmacists because they have no shop nor employees?
-              //Do employees of regular businesses with diverse customers have to report gifted sweat up to $15,000 per year?
-            />
-          )
-        ) : (
-          <button
-            onClick={() => logoutofapp()}
-            style={{
-              wordWrap: "unset",
-              width: "max-content",
-              border: "1px solid",
-              borderRadius: "2px",
-              padding: "3px 6px"
-            }}
-          >
-            logout of app (
-            {this.state.user !== undefined && this.state.user.username})
-          </button>
-        )}
-        {meAuth === undefined ? (
-          <div>
-            Sign in to transact without 2.9% + $.30 fees or visit a /slug to
-            donate. Try it out!{" "}
-            <a href="https://salt.net.co/test3">Donate to the developer/</a>
-          </div>
-        ) : (
-          <div>
-            <Bank
-              getUserInfo={() => this.gui.current.click()}
-              user={this.state.user}
-              auth={meAuth}
-              navigate={this.props.navigate}
-              pathname={this.props.pathname}
-            />
-          </div>
-        )}
       </div>
     );
   }
