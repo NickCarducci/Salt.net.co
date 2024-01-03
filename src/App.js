@@ -35,6 +35,9 @@ const firestore = getFirestore(firebase);
 class User extends React.Component {
   state = {
     amount: 0,
+    first: "",
+    middle: "",
+    last: "",
     billing_details: {
       first: "",
       middle: "",
@@ -587,10 +590,7 @@ class User extends React.Component {
                   this.props.auth !== undefined && this.props.auth.phoneNumber
                     ? this.props.auth.phoneNumber
                     : "",
-                name:
-                  billing_details.first +
-                  billing_details.middle +
-                  billing_details.last,
+                name: this.state.first + this.state.middle + this.state.last,
                 email:
                   this.props.auth !== undefined && this.props.auth.email
                     ? this.props.auth.email
@@ -1043,7 +1043,7 @@ export default class App extends React.Component {
               <div>
                 Sign in to transact without 2.9% + $.30 fees or visit a /slug to
                 donate. Try it out!{" "}
-                <a href="https://salt.net.co/test3">Donate to the developer/</a>
+                <a href="https://salt.net.co/test3">Donate to the developer</a>
               </div>
             ) : (
               <div>
