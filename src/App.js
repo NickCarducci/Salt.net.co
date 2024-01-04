@@ -808,7 +808,8 @@ class User extends React.Component {
                 </tr>
               </tbody>
             </table>
-            <button type="submit">Pay Now</button>
+            <button type="submit">Pay Now</button>&nbsp;
+            <i>No Refunds</i>
           </form>
         )}
       </div>
