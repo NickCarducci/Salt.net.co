@@ -895,8 +895,8 @@ export default class App extends React.Component {
           />
         ) : (
           <div style={{ maxWidth: "500px" }}>
-            Salt Donation collects your name, username, address, and banking
-            credentials to{space}
+            Salt Donation (by Nicholas Carducci) collects your name, username,
+            address, and banking credentials to{space}
             <span
               style={{
                 textDecoration: "underline"
@@ -904,7 +904,7 @@ export default class App extends React.Component {
             >
               generate your own donation page
             </span>
-            . (help: sayists@icloud.com)
+            .
             {meAuth === undefined ? (
               !this.state.login ? (
                 <div
@@ -1045,8 +1045,9 @@ export default class App extends React.Component {
                 Sign in to transact without 2.9% + $.30 fees or visit a /slug to
                 donate. Try it out!{" "}
                 <a href={window.location.href + "test3"}>
-                  Donate to the developer (Nicholas Carducci)
-                </a>
+                  Donate to the developer
+                </a>{" "}
+                (help: sayists@icloud.com)
               </div>
             ) : (
               <div>
