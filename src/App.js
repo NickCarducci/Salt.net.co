@@ -343,6 +343,7 @@ class User extends React.Component {
                       })
                       .catch(standardCatch);
                   }}
+                  style={{ display: "flex" }}
                 >
                   <input
                     required={true}
@@ -365,6 +366,7 @@ class User extends React.Component {
                       justifyContent: "center"
                     }}
                   />
+                  <i>No Refunds</i>
                 </form>
               </div>
             )}
