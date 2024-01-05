@@ -1044,7 +1044,9 @@ export default class App extends React.Component {
               <div>
                 Sign in to transact without 2.9% + $.30 fees or visit a /slug to
                 donate. Try it out!{" "}
-                <a href="https://salt.net.co/test3">Donate to the developer</a>
+                <a href={window.location.href + "test3"}>
+                  Donate to the developer (Nicholas Carducci)
+                </a>
               </div>
             ) : (
               <div>
@@ -1114,4 +1116,3 @@ export default class App extends React.Component {
     );
   }
 }
-
