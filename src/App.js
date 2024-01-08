@@ -900,6 +900,7 @@ export default class App extends React.Component {
             Salt Donation (by Nicholas Carducci) collects your name, username,
             address, and banking credentials to{space}
             <span
+              onClick={() => this.setState({ login: !this.state.login })}
               style={{
                 textDecoration: "underline"
               }}
@@ -920,11 +921,15 @@ export default class App extends React.Component {
                   }}
                 >
                   <div style={{ color: "white" }}>Salt</div>
-                  <button
-                    onClick={() => this.setState({ login: !this.state.login })}
-                  >
-                    login / signup
-                  </button>
+                  {null && (
+                    <button
+                      onClick={() =>
+                        this.setState({ login: !this.state.login })
+                      }
+                    >
+                      login / signup
+                    </button>
+                  )}
                 </div>
               ) : (
                 <Sudo
@@ -1044,7 +1049,7 @@ export default class App extends React.Component {
             )}
             {meAuth === undefined ? (
               <div>
-                Sign in to transact without 2.9% + $.30 fees or visit a /slug to
+                Use ACH to transact without 2.9% + $.30 fees, visit a /slug to
                 donate. Try it out!{" "}
                 <a href={window.location.href + "test3"}>
                   Donate to the developer
@@ -1119,3 +1124,4 @@ export default class App extends React.Component {
     );
   }
 }
+
