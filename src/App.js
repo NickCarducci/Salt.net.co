@@ -1050,7 +1050,7 @@ export default class App extends React.Component {
             {meAuth === undefined ? (
               <div>
                 Use ACH to transact without 2.9% + $.30 fees, visit a /slug to
-                donate. Try it out!{" "}
+                donate. Try a Checkout page out!{" "}
                 <a href={window.location.href + "test3"}>
                   Donate to the developer
                 </a>{" "}
@@ -1124,4 +1124,5 @@ export default class App extends React.Component {
     );
   }
 }
+
 
