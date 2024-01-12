@@ -27,7 +27,11 @@ import {
   setPersistence,
   signOut
 } from "firebase/auth";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 
+library.add(faShoppingCart);
 const stripePromise = loadStripe(
   "pk_live_51OKNATFM5LbCaNp9oc0X1gSOihpvb9e9su7C437PRT0eApItNnLwpcLXCNgXxRyN5wC1W1l1CN68ThLrjyyjU36B008vSUhERN"
 );
@@ -1050,9 +1054,10 @@ export default class App extends React.Component {
             {meAuth === undefined ? (
               <div>
                 Use ACH to transact without 2.9% + $.30 fees, visit a /slug to
-                donate. Try a Checkout page out!{" "}
+                donate.{" "}
                 <a href={window.location.href + "test3"}>
-                  Donate to the developer
+                  Donate to the developer{" "}
+                  <FontAwesomeIcon icon="fas fa-shopping-cart" />
                 </a>{" "}
                 (help: sayists@icloud.com)
               </div>
